@@ -655,8 +655,11 @@ function removeItem(id){
 }
 
 function recalc(id){
-  const q = parseFloat(document.getElementById('q'+id)?.value)||0;
-  const r = parseFloat(document.getElementById('r'+id)?.value)||0;
+  const row = document.getElementById('row'+id);
+  if(!row) return;
+  const nums = row.querySelectorAll('input[type="number"]');
+  const q = parseFloat(nums[0]?.value) || 0;
+  const r = parseFloat(nums[1]?.value) || 0;
   const el = document.getElementById('a'+id);
   if(el) el.textContent = money(q*r);
   liveUpdate();
@@ -665,10 +668,11 @@ function recalc(id){
 /* ── collect data ────────────────────────────── */
 function getData(){
   const items = [...document.querySelectorAll('.item-row')].map(row=>{
-    const id = row.id.replace('row','');
-    const q  = parseFloat(document.getElementById('q'+id)?.value)||0;
-    const r  = parseFloat(document.getElementById('r'+id)?.value)||0;
-    return { desc: document.getElementById('d'+id)?.value||'', q, r, amt: q*r };
+    const nums = row.querySelectorAll('input[type="number"]');
+    const q    = parseFloat(nums[0]?.value) || 0;
+    const r    = parseFloat(nums[1]?.value) || 0;
+    const desc = row.querySelector('input[type="text"]')?.value || '';
+    return { desc, q, r, amt: q*r };
   });
   const sub  = items.reduce((s,i)=>s+i.amt,0);
   const tax  = sub * (parseFloat(document.getElementById('taxRate').value)||0) / 100;
